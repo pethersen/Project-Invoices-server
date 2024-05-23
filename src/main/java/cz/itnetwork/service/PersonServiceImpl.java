@@ -46,25 +46,49 @@ public class PersonServiceImpl implements PersonService {
     private PersonRepository personRepository;
 
 
+    /**
+     * Adds a new person to the system.
+     *
+     * @param personDTO The DTO (Data Transfer Object) representing the person to be added.
+     * @return The DTO representing the added person.
+     */
     public PersonDTO addPerson(PersonDTO personDTO) {
+        // Map PersonDTO to PersonEntity
         PersonEntity entity = personMapper.toEntity(personDTO);
+
+        // Save the entity to the repository
         entity = personRepository.save(entity);
 
+        // Map the saved entity back to DTO and return
         return personMapper.toDTO(entity);
     }
 
+    /**
+     * Marks a person as hidden in the system without deleting the record.
+     *
+     * @param personId The ID of the person to be marked as hidden.
+     */
     @Override
     public void removePerson(long personId) {
         try {
+            // Fetch the person entity by ID
             PersonEntity person = fetchPersonById(personId);
+
+            // Set the 'hidden' flag to true
             person.setHidden(true);
 
+            // Save the updated entity
             personRepository.save(person);
         } catch (NotFoundException ignored) {
-            // The contract in the interface states, that no exception is thrown, if the entity is not found.
+            // No action needed if the person is not found
         }
     }
 
+    /**
+     * Retrieves all visible persons from the system.
+     *
+     * @return A list of DTOs representing all visible persons.
+     */
     @Override
     public List<PersonDTO> getAll() {
         return personRepository.findByHidden(false)
@@ -73,25 +97,53 @@ public class PersonServiceImpl implements PersonService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves a person by their ID.
+     *
+     * @param personId The ID of the person to retrieve.
+     * @return The DTO representing the retrieved person.
+     */
     @Override
     public PersonDTO getById(long personId) {
+        // Fetch the person entity by ID
         PersonEntity personEntity = fetchPersonById(personId);
+
+        // Map the entity to DTO and return
         return personMapper.toDTO(personEntity);
     }
 
+    /**
+     * Updates the information of a person.
+     *
+     * @param personId  The ID of the person to be edited.
+     * @param personDTO The DTO containing the updated information.
+     * @return The DTO representing the edited person.
+     */
     @Override
     public PersonDTO editPerson(long personId, PersonDTO personDTO) {
         try {
+            // Fetch the person entity by ID
             PersonEntity deletedPerson = fetchPersonById(personId);
+
+            // Mark the person as hidden
             deletedPerson.setHidden(true);
 
+            // Save the updated 'hidden' status
             personRepository.save(deletedPerson);
+
+            personDTO.setId(null);
+
+            // Map the updated DTO to entity
             PersonEntity editedPerson = personMapper.toEntity(personDTO);
+
+            // Save the edited person
             editedPerson = personRepository.save(editedPerson);
+
+            // Map the edited entity back to DTO and return
             return personMapper.toDTO(editedPerson);
 
         } catch (NotFoundException ignored) {
-            // The contract in the interface states, that no exception is thrown, if the entity is not found.
+            // No action needed if the person is not found
         }
         return null;
     }
@@ -111,6 +163,14 @@ public class PersonServiceImpl implements PersonService {
     }
     // endregion
 
+    /**
+     * Retrieves statistics for each visible person in the system.
+     * This method fetches information about each person such as their ID, name,
+     * and revenue generated (if available).
+     *
+     * @return A list of {@link PersonStatisticsDTO} objects containing statistics
+     *         for each visible person.
+     */
     public List<PersonStatisticsDTO> getStatistics() {
         List<PersonEntity> personEntities = personRepository.findByHidden(false);
         List<PersonStatisticsDTO> personStatisticsDTOs = new ArrayList<>();

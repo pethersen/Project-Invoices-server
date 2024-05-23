@@ -35,52 +35,105 @@ import java.util.List;
 @Setter
 public class PersonEntity {
 
+    /**
+     * Unique identifier for the person.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * The name of the person.
+     */
     @Column(nullable = false)
     private String name;
 
+    /**
+     * The identification number of the person.
+     */
     @Column(nullable = false)
     private String identificationNumber;
 
+    /**
+     * The tax number of the person.
+     */
     private String taxNumber;
 
+    /**
+     * The account number of the person.
+     */
     @Column(nullable = false)
     private String accountNumber;
 
+    /**
+     * The bank code associated with the person's account.
+     */
     @Column(nullable = false)
     private String bankCode;
 
+    /**
+     * The IBAN (International Bank Account Number) of the person's account.
+     */
     private String iban;
 
+    /**
+     * The telephone number of the person.
+     */
     @Column(nullable = false)
     private String telephone;
 
+    /**
+     * The email address of the person.
+     */
     @Column(nullable = false)
     private String mail;
 
+    /**
+     * The street address of the person.
+     */
     @Column(nullable = false)
     private String street;
 
+    /**
+     * The ZIP (postal) code of the person's address.
+     */
     @Column(nullable = false)
     private String zip;
 
+    /**
+     * The city of the person's address.
+     */
     @Column(nullable = false)
     private String city;
 
+    /**
+     * The country of the person's address.
+     */
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Countries country;
 
+    /**
+     * Any additional notes or comments related to the person.
+     */
     private String note;
 
+    /**
+     * Indicates whether the person is hidden in the system or not.
+     */
     private boolean hidden = false;
 
+    /**
+     * A list of invoices where the person is the buyer.
+     * Lazily loaded to improve performance.
+     */
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "buyer")
     List<InvoiceEntity> purchases = new ArrayList<>();
 
+    /**
+     * A list of invoices where the person is the seller.
+     * Lazily loaded to improve performance.
+     */
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "seller")
     List<InvoiceEntity> sales = new ArrayList<>();
 }

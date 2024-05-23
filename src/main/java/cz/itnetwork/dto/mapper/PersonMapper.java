@@ -29,7 +29,19 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface PersonMapper {
 
+    /**
+     * Converts a {@link PersonDTO} object to a corresponding {@link PersonEntity} object.
+     *
+     * @param source The {@link PersonDTO} object to be converted.
+     * @return A {@link PersonEntity} object representing the converted data.
+     */
     PersonEntity toEntity(PersonDTO source);
 
+    /**
+     * Converts a {@link PersonEntity} object to a corresponding {@link PersonDTO} object.
+     *
+     * @param source The {@link PersonEntity} object to be converted.
+     * @return A {@link PersonDTO} object representing the converted data.
+     */
     PersonDTO toDTO(PersonEntity source);
 }
